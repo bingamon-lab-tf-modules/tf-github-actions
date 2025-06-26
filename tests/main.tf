@@ -5,9 +5,6 @@ module "test" {
     github = github.organization
   }
 
-  # Add variables here based on the module's variables.tf
-  # Example variables (uncomment and modify as needed):
-
   github_enterprise_slug   = "acme-corp"
   github_organization_name = "acme-engineering"
 
