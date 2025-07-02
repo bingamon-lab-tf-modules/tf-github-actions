@@ -113,6 +113,19 @@ jobs:
         run: |
           nix profile install --accept-flake-config nixpkgs#devenv
 
+      - id: opentofu_init
+        name: OpenTofu Init
+        shell: devenv shell --quiet bash -- -e {0}
+        run: |
+          echo "🔧 Initializing OpenTofu..."
+          cd "${MODULE_HOME}"
+          if ! tofu init -backend=false;
+          then
+            echo "❌ OpenTofu initialization failed!"
+            exit 1
+          fi
+          echo "✅ OpenTofu initialization completed"
+
       - id: opentofu_format
         name: OpenTofu Format
         shell: devenv shell --quiet bash -- -e {0}
@@ -146,19 +159,6 @@ jobs:
             echo "⚠️ terraform-docs not available, documentation check failed"
             exit 1
           fi
-
-      - id: opentofu_init
-        name: OpenTofu Init
-        shell: devenv shell --quiet bash -- -e {0}
-        run: |
-          echo "🔧 Initializing OpenTofu..."
-          cd "${MODULE_HOME}"
-          if ! tofu init -backend=false;
-          then
-            echo "❌ OpenTofu initialization failed!"
-            exit 1
-          fi
-          echo "✅ OpenTofu initialization completed"
 
       - id: opentofu_validate
         name: OpenTofu Validate
@@ -228,18 +228,24 @@ jobs:
         if: always()
         run: |
           echo "=== OpenTofu Module Build Status ==="
-          echo "Format: ${{ steps.opentofu_format.outcome }}"
           echo "Init: ${{ steps.opentofu_init.outcome }}"
+          echo "Format: ${{ steps.opentofu_format.outcome }}"
           echo "Validate: ${{ steps.opentofu_validate.outcome }}"
           echo "Docs: ${{ steps.opentofu_docs_check.outcome }}"
           echo "Security: ${{ steps.opentofu_security_scan.outcome }}"
           echo "Lint: ${{ steps.opentofu_lint.outcome }}"
           echo "Test: ${{ steps.opentofu_test.outcome }}"
 
-          if [[ "${{ steps.opentofu_format.outcome }}" == "success" && \
-                "${{ steps.opentofu_init.outcome }}" == "success" && \
-                "${{ steps.opentofu_validate.outcome }}" == "success" && \
-                "${{ steps.opentofu_test.outcome }}" == "success" ]]; then
+          if [[ \
+            "${{ steps.opentofu_init.outcome }}" == "success" && \
+            "${{ steps.opentofu_format.outcome }}" == "success" && \
+            "${{ steps.opentofu_docs_check.outcome }}" == "success" && \
+            "${{ steps.opentofu_validate.outcome }}" == "success" && \
+            "${{ steps.opentofu_security_scan.outcome }}" == "success" && \
+            "${{ steps.opentofu_lint.outcome }}" == "success" && \
+            "${{ steps.opentofu_test.outcome }}" == "success" \
+          ]]; \
+          then
             echo "STATUS=success" >> $GITHUB_OUTPUT
             echo "✅ All OpenTofu checks passed!"
           else
