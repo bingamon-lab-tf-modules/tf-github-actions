@@ -92,8 +92,7 @@ in
   };
 
   packages =
-    packages
-    ++ lib.optionals (!config.container.isBuilding || config.name == "devenv") devPackages;
+    packages ++ lib.optionals (!config.container.isBuilding || config.name == "devenv") devPackages;
 
   enterShell = ''
     figlet -f starwars -w 180 $PROJECT
