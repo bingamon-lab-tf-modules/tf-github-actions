@@ -23,9 +23,7 @@ on:  # yamllint disable-line rule:truthy
       - "main"
       - "master"
       - "trunk"
-    paths_ignore:
-      - "docs/**"
-      - "*.md"
+    paths-ignore:
       - "**/*.md"
 
 concurrency:

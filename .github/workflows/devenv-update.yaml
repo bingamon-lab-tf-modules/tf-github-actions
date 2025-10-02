@@ -1,6 +1,6 @@
 ---
 ##################################################
-# Name: update.yaml
+# Name: devenv-update.yaml
 # Description: Workflow for Updating Developer Environment
 ##################################################
 
@@ -93,6 +93,11 @@ jobs:
         name: Devenv update
         run: |
           devenv update
+
+      - id: devenv_test
+        name: Devenv test
+        run: |
+          devenv test
 
       - id: create_pull_request
         name: Create Pull Request
