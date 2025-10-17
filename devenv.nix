@@ -70,13 +70,13 @@ in
     PROJECT = config.name;
   };
 
-  cachix = {
-    enable = true;
-    pull = [
-      "bingamon-lab-tf-modules"
-    ];
-    push = "bingamon-lab-tf-modules";
-  };
+  #cachix = {
+  #  enable = true;
+  #  pull = [
+  #    "bingamon-lab-tf-modules"
+  #  ];
+  #  push = "bingamon-lab-tf-modules";
+  #};
 
   devenv = {
     warnOnNewVersion = true;
@@ -169,7 +169,9 @@ in
       pre-commit-hook-ensure-sops.enable = true;
       prettier = {
         enable = true;
-        excludes = [ ];
+        excludes = [
+          "module/README.md"
+        ];
       };
       # Use prettier instead.
       pretty-format-json.enable = false;
