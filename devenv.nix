@@ -124,15 +124,7 @@ in
   };
 
   git-hooks = {
-    excludes = [
-      ".cache"
-      ".devenv"
-      ".direnv"
-      ".git"
-      ".vscode"
-      "bundle"
-      "vendor"
-    ];
+    excludes = [ ];
     hooks = {
       actionlint.enable = true;
       #action-validator.enable = true; # TODO: Enable when devenv upstream is fixed.
@@ -154,9 +146,7 @@ in
       gptcommit.enable = true;
       markdownlint = {
         enable = true;
-        excludes = [
-          "module/README.md"
-        ];
+        excludes = [ ];
         settings = {
           configuration = {
             MD013 = {
@@ -179,9 +169,7 @@ in
       pre-commit-hook-ensure-sops.enable = true;
       prettier = {
         enable = true;
-        excludes = [
-          "module/README.md"
-        ];
+        excludes = [ ];
       };
       # Use prettier instead.
       pretty-format-json.enable = false;
