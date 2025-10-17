@@ -18,8 +18,7 @@ on:  # yamllint disable-line rule:truthy
       - devenv.nix
       - devenv.yaml
       - devenv.lock
-      - devenv/**
-      - module/**
+      - "module/*"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

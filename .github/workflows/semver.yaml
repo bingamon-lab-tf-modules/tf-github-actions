@@ -16,8 +16,8 @@ on:  # yamllint disable-line rule:truthy
       - trunk
       - candidate # Release Candidates
     paths:
-      - "module/**" # Only run when the module is updated
-      - "scripts/**" # Only run when the scripts are updated
+      - "module/*" # Only run when the module is updated
+      - "scripts/*" # Only run when the scripts are updated
 
   # Release (Push)
   push:
@@ -27,8 +27,9 @@ on:  # yamllint disable-line rule:truthy
       - trunk
       - candidate # Release Candidates
     paths:
-      - "module/**" # Only run when the module is updated
-      - "scripts/**" # Only run when the scripts are updated
+      - "module/*" # Only run when the module is updated
+      - "scripts/*" # Only run when the scripts are updated
+
   # Manual Trigger
   workflow_dispatch:
     inputs:
@@ -244,7 +245,7 @@ jobs:
         run: |
           # Get the latest tag or default to v0.0.0
           LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
-          echo "LATEST_TAG=${LATEST_TAG}" >> $GITHUB_OUTPUT
+          echo "LATEST_TAG=${LATEST_TAG}" >> "$GITHUB_OUTPUT"
           echo "✅ Latest tag: ${LATEST_TAG}"
 
       - id: calculate_semver
@@ -472,7 +473,7 @@ jobs:
           echo "📝 Generating changelog..."
 
           CHANGELOG_FILE="/tmp/changelog.md"
-          echo "CHANGELOG_FILE=${CHANGELOG_FILE}" >> $GITHUB_OUTPUT
+          echo "CHANGELOG_FILE=${CHANGELOG_FILE}" >> "$GITHUB_OUTPUT"
 
           # Get the current tag that was just created and strip the 'v' prefix
           CURRENT_TAG="${{ needs.semantic-version.outputs.tag }}"
@@ -754,8 +755,8 @@ jobs:
             DESCRIPTION="Failed to determine semantic version"
           fi
 
-          echo "RESULT=${RESULT}" >> $GITHUB_OUTPUT
-          echo "DESCRIPTION=${DESCRIPTION}" >> $GITHUB_OUTPUT
+          echo "RESULT=${RESULT}" >> "$GITHUB_OUTPUT"
+          echo "DESCRIPTION=${DESCRIPTION}" >> "$GITHUB_OUTPUT"
 
           echo "=== Final Status ==="
           echo "Result: ${RESULT}"

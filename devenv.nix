@@ -70,13 +70,13 @@ in
     PROJECT = config.name;
   };
 
-  cachix = {
-    enable = true;
-    pull = [
-      "bingamon-lab-tf-modules"
-    ];
-    push = "bingamon-lab-tf-modules";
-  };
+  #cachix = {
+  #  enable = true;
+  #  pull = [
+  #    "bingamon-lab-tf-modules"
+  #  ];
+  #  push = "bingamon-lab-tf-modules";
+  #};
 
   devenv = {
     warnOnNewVersion = true;
@@ -124,18 +124,10 @@ in
   };
 
   git-hooks = {
-    excludes = [
-      ".cache"
-      ".devenv"
-      ".direnv"
-      ".git"
-      ".vscode"
-      "bundle"
-      "vendor"
-    ];
+    excludes = [ ];
     hooks = {
       actionlint.enable = true;
-      #action-validator.enable = true; # TODO: Enable when devenv upstream is fixed.
+      action-validator.enable = true;
       check-json.enable = true;
       check-merge-conflicts.enable = true;
       check-shebang-scripts-are-executable.enable = true;
@@ -154,9 +146,7 @@ in
       gptcommit.enable = true;
       markdownlint = {
         enable = true;
-        excludes = [
-          "module/README.md"
-        ];
+        excludes = [ ];
         settings = {
           configuration = {
             MD013 = {
