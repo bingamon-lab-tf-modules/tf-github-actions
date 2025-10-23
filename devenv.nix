@@ -319,7 +319,7 @@ in
         fi
         echo "Initialising OpenTofu providers in ''${DIR}"
         pushd "''${DIR}"
-        tofu init -backend=false || {
+        tofu init -backend=false -upgrade || {
           echo "Failed to initialise OpenTofu providers in ''${DIR}"
           exit 1
         }
