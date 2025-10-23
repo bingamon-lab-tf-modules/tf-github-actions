@@ -87,14 +87,14 @@ github_actions_permissions = {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
-| <a name="requirement_github"></a> [github](#requirement\_github) | 6.6.0 |
+| <a name="requirement_github"></a> [github](#requirement\_github) | 6.7.0 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | 3.2.4 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_github"></a> [github](#provider\_github) | 6.6.0 |
+| <a name="provider_github"></a> [github](#provider\_github) | 6.7.0 |
 | <a name="provider_null"></a> [null](#provider\_null) | 3.2.4 |
 
 ## Modules
@@ -105,21 +105,21 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [github_actions_environment_secret.this](https://registry.terraform.io/providers/integrations/github/6.6.0/docs/resources/actions_environment_secret) | resource |
-| [github_actions_environment_variable.this](https://registry.terraform.io/providers/integrations/github/6.6.0/docs/resources/actions_environment_variable) | resource |
-| [github_actions_organization_oidc_subject_claim_customization_template.this](https://registry.terraform.io/providers/integrations/github/6.6.0/docs/resources/actions_organization_oidc_subject_claim_customization_template) | resource |
-| [github_actions_organization_permissions.this](https://registry.terraform.io/providers/integrations/github/6.6.0/docs/resources/actions_organization_permissions) | resource |
-| [github_actions_organization_secret.this](https://registry.terraform.io/providers/integrations/github/6.6.0/docs/resources/actions_organization_secret) | resource |
-| [github_actions_organization_variable.this](https://registry.terraform.io/providers/integrations/github/6.6.0/docs/resources/actions_organization_variable) | resource |
-| [github_actions_repository_oidc_subject_claim_customization_template.this](https://registry.terraform.io/providers/integrations/github/6.6.0/docs/resources/actions_repository_oidc_subject_claim_customization_template) | resource |
-| [github_actions_runner_group.this](https://registry.terraform.io/providers/integrations/github/6.6.0/docs/resources/actions_runner_group) | resource |
-| [github_actions_secret.this](https://registry.terraform.io/providers/integrations/github/6.6.0/docs/resources/actions_secret) | resource |
-| [github_actions_variable.this](https://registry.terraform.io/providers/integrations/github/6.6.0/docs/resources/actions_variable) | resource |
-| [github_enterprise_actions_runner_group.this](https://registry.terraform.io/providers/integrations/github/6.6.0/docs/resources/enterprise_actions_runner_group) | resource |
+| [github_actions_environment_secret.this](https://registry.terraform.io/providers/integrations/github/6.7.0/docs/resources/actions_environment_secret) | resource |
+| [github_actions_environment_variable.this](https://registry.terraform.io/providers/integrations/github/6.7.0/docs/resources/actions_environment_variable) | resource |
+| [github_actions_organization_oidc_subject_claim_customization_template.this](https://registry.terraform.io/providers/integrations/github/6.7.0/docs/resources/actions_organization_oidc_subject_claim_customization_template) | resource |
+| [github_actions_organization_permissions.this](https://registry.terraform.io/providers/integrations/github/6.7.0/docs/resources/actions_organization_permissions) | resource |
+| [github_actions_organization_secret.this](https://registry.terraform.io/providers/integrations/github/6.7.0/docs/resources/actions_organization_secret) | resource |
+| [github_actions_organization_variable.this](https://registry.terraform.io/providers/integrations/github/6.7.0/docs/resources/actions_organization_variable) | resource |
+| [github_actions_repository_oidc_subject_claim_customization_template.this](https://registry.terraform.io/providers/integrations/github/6.7.0/docs/resources/actions_repository_oidc_subject_claim_customization_template) | resource |
+| [github_actions_runner_group.this](https://registry.terraform.io/providers/integrations/github/6.7.0/docs/resources/actions_runner_group) | resource |
+| [github_actions_secret.this](https://registry.terraform.io/providers/integrations/github/6.7.0/docs/resources/actions_secret) | resource |
+| [github_actions_variable.this](https://registry.terraform.io/providers/integrations/github/6.7.0/docs/resources/actions_variable) | resource |
+| [github_enterprise_actions_runner_group.this](https://registry.terraform.io/providers/integrations/github/6.7.0/docs/resources/enterprise_actions_runner_group) | resource |
 | [null_resource.validate_organizations](https://registry.terraform.io/providers/hashicorp/null/3.2.4/docs/resources/resource) | resource |
-| [github_enterprise.this](https://registry.terraform.io/providers/integrations/github/6.6.0/docs/data-sources/enterprise) | data source |
-| [github_organization.this](https://registry.terraform.io/providers/integrations/github/6.6.0/docs/data-sources/organization) | data source |
-| [github_repository.this](https://registry.terraform.io/providers/integrations/github/6.6.0/docs/data-sources/repository) | data source |
+| [github_enterprise.this](https://registry.terraform.io/providers/integrations/github/6.7.0/docs/data-sources/enterprise) | data source |
+| [github_organization.this](https://registry.terraform.io/providers/integrations/github/6.7.0/docs/data-sources/organization) | data source |
+| [github_repository.this](https://registry.terraform.io/providers/integrations/github/6.7.0/docs/data-sources/repository) | data source |
 
 ## Inputs
 
