@@ -119,7 +119,7 @@ jobs:
         run: |
           echo "🔧 Initializing OpenTofu..."
           cd "${MODULE_HOME}"
-          if ! tofu init -backend=false;
+          if ! tofu init -backend=false -upgrade;
           then
             echo "❌ OpenTofu initialization failed!"
             exit 1
