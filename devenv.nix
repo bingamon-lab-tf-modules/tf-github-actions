@@ -38,26 +38,26 @@ let
     packer
     terraform-docs
     terraform-providers.ciscodevnet_aci
-    terraform-providers.jfrog_artifactory
-    terraform-providers.f5networks_bigip
-    terraform-providers.hashicorp_dns
-    terraform-providers.integrations_github
-    terraform-providers.hashicorp_http
-    terraform-providers.gavinbunney_kubectl
     terraform-providers.dmacvicar_libvirt
+    terraform-providers.f5networks_bigip
+    terraform-providers.gavinbunney_kubectl
+    terraform-providers.hashicorp_dns
+    terraform-providers.hashicorp_http
     terraform-providers.hashicorp_local
     terraform-providers.hashicorp_null
-    terraform-providers.nutanix_nutanix
     terraform-providers.hashicorp_random
-    terraform-providers.tenstad_remote
-    terraform-providers.numtide_secret
-    terraform-providers.scottwinkler_shell
-    terraform-providers.carlpett_sops
-    terraform-providers.loafoe_ssh
-    terraform-providers.sysdiglabs_sysdig
     terraform-providers.hashicorp_time
     terraform-providers.hashicorp_tls
     terraform-providers.hashicorp_vault
+    terraform-providers.integrations_github
+    terraform-providers.jfrog_artifactory
+    terraform-providers.loafoe_ssh
+    terraform-providers.numtide_secret
+    terraform-providers.nutanix_nutanix
+    terraform-providers.scottwinkler_shell
+    terraform-providers.carlpett_sops
+    terraform-providers.sysdiglabs_sysdig
+    terraform-providers.tenstad_remote
     tflint
     vault
   ];
