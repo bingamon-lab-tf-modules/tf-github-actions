@@ -70,13 +70,13 @@ in
     PROJECT = config.name;
   };
 
-  #cachix = {
-  #  enable = true;
-  #  pull = [
-  #    "bingamon-lab-tf-modules"
-  #  ];
-  #  push = "bingamon-lab-tf-modules";
-  #};
+  cachix = {
+    enable = true;
+    pull = [
+      "bingamon-lab-tf-modules"
+    ];
+    push = "bingamon-lab-tf-modules";
+  };
 
   devenv = {
     warnOnNewVersion = true;
