@@ -119,7 +119,7 @@ jobs:
         run: |
           echo "🔧 Initializing OpenTofu..."
           cd "${MODULE_HOME}"
-          if ! tofu init -backend=false -upgrade;
+          if ! tofu init -backend=false;
           then
             echo "❌ OpenTofu initialization failed!"
             exit 1
@@ -151,6 +151,8 @@ jobs:
             then
               echo "❌ Module README.md is out of date!"
               echo "💡 Run: tofu-docs ${MODULE_HOME} locally to update the README.md"
+              echo "Displaying diff..."
+              terraform-docs --output-check --config .terraform-docs.yml ${MODULE_HOME}
               exit 1
             fi
             echo "✅ Documentation is up to date"
