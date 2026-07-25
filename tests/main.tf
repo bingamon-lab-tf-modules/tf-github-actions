@@ -22,6 +22,17 @@ module "test" {
       type                       = "organization"
       allows_public_repositories = false
       visibility                 = "all"
+    },
+    # Repository-scoped runner group. With visibility "all" the
+    # selected_repository_ids expression short-circuits to [] and is never
+    # evaluated, which is how the .id-instead-of-.repo_id bug stayed hidden.
+    # This group forces it to resolve a repository name to a numeric repo_id.
+    {
+      name                       = "test-runners-scoped"
+      type                       = "organization"
+      allows_public_repositories = false
+      visibility                 = "selected"
+      allowed_repositories       = ["test-repo"]
     }
   ]
 
@@ -31,6 +42,15 @@ module "test" {
       type       = "organization"
       value      = "https://api.example.com"
       visibility = "all"
+    },
+    # Repository-scoped organization variable, exercising the same
+    # selected_repository_ids expression on github_actions_organization_variable.
+    {
+      name                 = "API_SCOPED_URL"
+      type                 = "organization"
+      value                = "https://scoped.example.com"
+      visibility           = "selected"
+      allowed_repositories = ["test-repo"]
     }
   ]
 
