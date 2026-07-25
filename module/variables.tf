@@ -101,6 +101,16 @@ variable "github_actions_secrets" {
     name = string
     type = string
 
+    # Exactly one value field must be set. The provider constrains
+    # value / value_encrypted / encrypted_value / plaintext_value with
+    # ExactlyOneOf, which rejects both "more than one" and "none at all".
+    value           = optional(string, null) # Plaintext value, preferred.
+    value_encrypted = optional(string, null) # Base64 value, pairs with key_id.
+    key_id          = optional(string, null) # Public key id for value_encrypted.
+
+    # Legacy aliases, deprecated upstream but still accepted so existing
+    # callers keep working. plaintext_value maps to value, and encrypted_value
+    # maps to value_encrypted once key_id is supplied.
     encrypted_value = optional(string, null)
     plaintext_value = optional(string, null)
 
@@ -113,6 +123,50 @@ variable "github_actions_secrets" {
   }))
 
   default = []
+
+  # This is a validation block rather than a check block on purpose: a check
+  # block only warns, so a value-less secret would still reach the provider and
+  # fail its ExactlyOneOf constraint with a far less obvious error.
+  validation {
+    condition = alltrue([
+      for secret in var.github_actions_secrets :
+      length(compact([
+        secret.value,
+        secret.value_encrypted,
+        secret.plaintext_value,
+        secret.encrypted_value,
+      ])) == 1
+    ])
+    error_message = format(
+      "Each secret must set exactly one of: value, value_encrypted, plaintext_value, encrypted_value. Offending secret(s): %s",
+      join(", ", [
+        for secret in var.github_actions_secrets : secret.name
+        if length(compact([
+          secret.value,
+          secret.value_encrypted,
+          secret.plaintext_value,
+          secret.encrypted_value,
+        ])) != 1
+      ])
+    )
+  }
+
+  # Mirrors the provider's ConflictsWith on key_id, which cannot pair with a
+  # plaintext value. Without this the key_id would be silently discarded.
+  validation {
+    condition = alltrue([
+      for secret in var.github_actions_secrets :
+      length(compact([secret.value, secret.plaintext_value])) == 0
+      if secret.key_id != null
+    ])
+    error_message = format(
+      "key_id may only accompany value_encrypted or encrypted_value, never a plaintext value. Offending secret(s): %s",
+      join(", ", [
+        for secret in var.github_actions_secrets : secret.name
+        if secret.key_id != null && length(compact([secret.value, secret.plaintext_value])) > 0
+      ])
+    )
+  }
 }
 
 variable "github_actions_oidc_subject_claim_templates" {

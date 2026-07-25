@@ -36,10 +36,10 @@ module "test" {
 
   github_actions_secrets = [
     {
-      name            = "TEST_SECRET"
-      type            = "organization"
-      plaintext_value = "test-value"
-      visibility      = "all"
+      name       = "TEST_SECRET"
+      type       = "organization"
+      value      = "test-value"
+      visibility = "all"
     }
   ]
 
