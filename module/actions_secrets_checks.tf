@@ -2,57 +2,10 @@
 # Checks: Actions Secrets
 ####################################################
 
-# Check and validate actions secrets
-# - Name is required
-# - Type is required
-# - Encrypted or plaintext value is required (but not both)
-check "actions_secrets" {
-  assert {
-    condition = alltrue([
-      for idx, secret in var.github_actions_secrets :
-      can(secret.name) &&
-      secret.name != null &&
-      can(secret.type) &&
-      secret.type != null &&
-      (
-        (can(secret.encrypted_value) && secret.encrypted_value != null && secret.encrypted_value != "" &&
-        (!can(secret.plaintext_value) || secret.plaintext_value == null || secret.plaintext_value == "")) ||
-        (can(secret.plaintext_value) && secret.plaintext_value != null && secret.plaintext_value != "" &&
-        (!can(secret.encrypted_value) || secret.encrypted_value == null || secret.encrypted_value == ""))
-      )
-    ])
-    error_message = join("\n", [
-      for idx, secret in var.github_actions_secrets :
-      (!can(secret.name) || secret.name == null || !can(secret.type) || secret.type == null ||
-        !(
-          (can(secret.encrypted_value) && secret.encrypted_value != null && secret.encrypted_value != "" &&
-          (!can(secret.plaintext_value) || secret.plaintext_value == null || secret.plaintext_value == "")) ||
-          (can(secret.plaintext_value) && secret.plaintext_value != null && secret.plaintext_value != "" &&
-          (!can(secret.encrypted_value) || secret.encrypted_value == null || secret.encrypted_value == ""))
-        )) ? (
-        format(
-          "Invalid actions secret '%s':%s%s%s",
-          can(secret.name) ? secret.name : format("(index %d)", idx),
-          (!can(secret.name) || secret.name == null ? " [missing name]" : ""),
-          (!can(secret.type) || secret.type == null ? " [missing type]" : ""),
-          (!(
-            (can(secret.encrypted_value) && secret.encrypted_value != null && secret.encrypted_value != "" &&
-            (!can(secret.plaintext_value) || secret.plaintext_value == null || secret.plaintext_value == "")) ||
-            (can(secret.plaintext_value) && secret.plaintext_value != null && secret.plaintext_value != "" &&
-            (!can(secret.encrypted_value) || secret.encrypted_value == null || secret.encrypted_value == ""))
-          ) ? " [requires exactly one of encrypted_value or plaintext_value]" : "")
-        )
-      ) : null
-      if(!can(secret.name) || secret.name == null || !can(secret.type) || secret.type == null ||
-        !(
-          (can(secret.encrypted_value) && secret.encrypted_value != null && secret.encrypted_value != "" &&
-          (!can(secret.plaintext_value) || secret.plaintext_value == null || secret.plaintext_value == "")) ||
-          (can(secret.plaintext_value) && secret.plaintext_value != null && secret.plaintext_value != "" &&
-          (!can(secret.encrypted_value) || secret.encrypted_value == null || secret.encrypted_value == ""))
-      ))
-    ])
-  }
-}
+# NOTE: "exactly one value field per secret" is enforced by a validation block
+# on var.github_actions_secrets, not here. A check block only warns, which is
+# not enough to keep a value-less secret away from the provider's ExactlyOneOf
+# constraint. Name and type presence is guaranteed by the variable's type.
 
 # Check secret name uniqueness across different types and scopes
 check "actions_secrets_unique_names" {

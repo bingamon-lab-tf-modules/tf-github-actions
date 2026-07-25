@@ -54,10 +54,15 @@ resource "github_actions_runner_group" "this" {
   # If visibility is "selected", then we need to provide repository_ids. Can be 'all', 'selected', or 'private'.
   visibility = lookup(each.value, "visibility", "all")
 
-  # If visibility is "selected" or "private", provide repository_ids from lookups
+  # If visibility is "selected" or "private", provide repository_ids from lookups.
+  #
+  # Use .repo_id, never .id: on data.github_repository the id attribute is the
+  # repository NAME (the provider calls d.SetId(repoName)), while repo_id holds
+  # the numeric database ID this argument requires. repo_id is already a number,
+  # so no tonumber() conversion is needed.
   selected_repository_ids = (
     contains(["selected", "private"], lookup(each.value, "visibility", "all")) && length(each.value.allowed_repositories) > 0
-    ? [for repo in each.value.allowed_repositories : tonumber(data.github_repository.this[repo].id)]
+    ? [for repo in each.value.allowed_repositories : data.github_repository.this[repo].repo_id]
     : []
   )
 

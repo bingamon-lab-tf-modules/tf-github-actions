@@ -11,11 +11,21 @@ resource "github_actions_organization_variable" "this" {
   visibility = lookup(each.value, "visibility", "private")
 
   # If visibility is "selected" then select_repository_ids is required.
+  #
+  # Use .repo_id, never .id: on data.github_repository the id attribute is the
+  # repository NAME (the provider calls d.SetId(repoName)), while repo_id holds
+  # the numeric database ID this set(number) argument requires.
+  #
+  # No compact()/try() wrapper: every name in allowed_repositories is collected
+  # into local.all_referenced_repos and therefore always keyed in
+  # data.github_repository.this, so a missing key is a genuine configuration
+  # error that should surface rather than be silently dropped. compact() only
+  # existed to strip the nulls try() injected, and it stringifies numbers.
   selected_repository_ids = (
     contains(["selected"], lookup(each.value, "visibility", "selected")) &&
     can(each.value.allowed_repositories) &&
     each.value.allowed_repositories != null
-    ? compact([for repo in each.value.allowed_repositories : try(data.github_repository.this[repo].id, null)])
+    ? [for repo in each.value.allowed_repositories : data.github_repository.this[repo].repo_id]
     : []
   )
 

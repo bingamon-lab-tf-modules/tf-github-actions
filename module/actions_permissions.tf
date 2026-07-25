@@ -8,6 +8,11 @@ resource "github_actions_organization_permissions" "this" {
   # Optional: allowed_actions policy (defaults to "all")
   allowed_actions = var.github_actions_permissions.allowed_actions
 
+  # Optional: require SHA pinning for actions and reusable workflows.
+  # Null by default, leaving the organization's current setting untouched.
+  # See the variable definition for why null rather than false.
+  sha_pinning_required = var.github_actions_permissions.sha_pinning_required
+
   # Dynamic allowed_actions_config block
   dynamic "allowed_actions_config" {
     for_each = (
