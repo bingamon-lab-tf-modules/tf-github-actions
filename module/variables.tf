@@ -212,6 +212,12 @@ variable "github_actions_permissions" {
     enabled_repositories_config = optional(object({
       repositories = list(string)
     }), null)
+
+    # Optional: Whether pinning to a specific SHA is required for all actions
+    # and reusable workflows in the organization.
+    # Exposed but deliberately off by default; enabling it is a conscious
+    # decision because it forces every workflow reference to become a SHA.
+    sha_pinning_required = optional(bool, false)
   })
 
   default = null

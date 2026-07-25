@@ -34,12 +34,48 @@ module "test" {
     }
   ]
 
+  # Each secret must set exactly one value field. The provider constrains
+  # value / value_encrypted / encrypted_value / plaintext_value with
+  # ExactlyOneOf, so the module emits exactly one argument per secret.
+  #
+  # Negative case, verified manually and deliberately not committed because it
+  # fails the build by design:
+  #
+  #   { name = "NEGATIVE_NO_VALUE", type = "organization", visibility = "all" }
+  #
+  # produces, at `tofu validate` time:
+  #   Each secret must set exactly one of: value, value_encrypted,
+  #   plaintext_value, encrypted_value. Offending secret(s): NEGATIVE_NO_VALUE
   github_actions_secrets = [
+    # Modern plaintext path: emits `value`.
     {
       name       = "TEST_SECRET"
       type       = "organization"
       value      = "test-value"
       visibility = "all"
+    },
+    # Modern encrypted path: emits `value_encrypted` plus `key_id`.
+    {
+      name            = "TEST_SECRET_ENCRYPTED"
+      type            = "organization"
+      value_encrypted = "dGVzdC1lbmNyeXB0ZWQtdmFsdWU=" # spellchecker:disable-line
+      key_id          = "test-key-id"
+      visibility      = "all"
+    },
+    # Legacy encrypted path with no key_id: emits deprecated `encrypted_value`.
+    {
+      name            = "TEST_SECRET_ENCRYPTED_LEGACY"
+      type            = "organization"
+      encrypted_value = "dGVzdC1sZWdhY3ktdmFsdWU=" # spellchecker:disable-line
+      visibility      = "all"
+    },
+    # Repository scoping via github_actions_organization_secret_repositories.
+    {
+      name                 = "TEST_SECRET_SCOPED"
+      type                 = "organization"
+      value                = "test-scoped-value"
+      visibility           = "selected"
+      allowed_repositories = ["test-repo"]
     }
   ]
 
@@ -53,5 +89,8 @@ module "test" {
   github_actions_permissions = {
     enabled_repositories = "all"
     allowed_actions      = "all"
+
+    # Provider 6.11.0 attribute, exposed by the module and off by default.
+    sha_pinning_required = false
   }
 }

@@ -47,20 +47,40 @@ resource "github_actions_organization_secret" "this" {
 
   visibility = lookup(each.value, "visibility", "private")
 
-  # If visibility is "selected" then select_repository_ids is required.
-  selected_repository_ids = (
-    contains(["selected"], lookup(each.value, "visibility", "selected")) &&
-    can(each.value.allowed_repositories) &&
-    each.value.allowed_repositories != null
-    ? compact([for repo in each.value.allowed_repositories : try(data.github_repository.this[repo].id, null)])
-    : []
-  )
+  # Repository scoping lives in github_actions_organization_secret_repositories
+  # below; selected_repository_ids on this resource is deprecated upstream.
 
   depends_on = [
     data.github_enterprise.this,
     data.github_organization.this
   ]
 
+}
+
+# Organization Secret Repository Access
+# Replaces the deprecated selected_repository_ids argument on
+# github_actions_organization_secret. Only applies to secrets whose visibility
+# is "selected"; the provider rejects a repository list for any other value.
+resource "github_actions_organization_secret_repositories" "this" {
+  for_each = {
+    for secret in var.github_actions_secrets : secret.name => secret
+    if secret.type == "organization" &&
+    lookup(secret, "visibility", "private") == "selected" &&
+    length(coalesce(secret.allowed_repositories, [])) > 0
+  }
+
+  # Referencing the secret keeps this resource ordered after it, which matters
+  # because updating the secret itself resets the repository list server-side.
+  secret_name = github_actions_organization_secret.this[each.key].secret_name
+
+  selected_repository_ids = [
+    for repo in each.value.allowed_repositories :
+    data.github_repository.this[repo].repo_id
+  ]
+
+  depends_on = [
+    data.github_repository.this
+  ]
 }
 
 # Repository Secrets
