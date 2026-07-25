@@ -215,9 +215,20 @@ variable "github_actions_permissions" {
 
     # Optional: Whether pinning to a specific SHA is required for all actions
     # and reusable workflows in the organization.
-    # Exposed but deliberately off by default; enabling it is a conscious
-    # decision because it forces every workflow reference to become a SHA.
-    sha_pinning_required = optional(bool, false)
+    #
+    # Exposed but unmanaged by default. Enabling it is a conscious decision
+    # because it forces every workflow reference to become a SHA.
+    #
+    # The default is deliberately null, NOT false. Do not "tidy" it to false:
+    # sha_pinning_required is Optional + Computed in the provider, and its
+    # update path guards on d.GetOk(), which returns ok=false for a false
+    # boolean (false is the zero value in terraform-plugin-sdk). So false is
+    # never sent to the API and cannot turn pinning off. Worse, because the
+    # attribute is Computed, config false against a remote value of true
+    # produces a diff that apply cannot resolve - a perpetual, never-
+    # converging plan. null means "leave whatever GitHub has", which is the
+    # only honest way to express "off by default" for this attribute.
+    sha_pinning_required = optional(bool, null)
   })
 
   default = null

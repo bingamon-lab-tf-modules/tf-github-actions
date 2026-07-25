@@ -90,7 +90,10 @@ module "test" {
     enabled_repositories = "all"
     allowed_actions      = "all"
 
-    # Provider 6.11.0 attribute, exposed by the module and off by default.
-    sha_pinning_required = false
+    # Provider 6.11.0 attribute, exposed by the module and unmanaged (null) by
+    # default. Exercised here as true because that is the only value with real
+    # effect: false is never sent to the API (the provider guards on GetOk,
+    # which treats a false boolean as unset), so it would test nothing.
+    sha_pinning_required = true
   }
 }
