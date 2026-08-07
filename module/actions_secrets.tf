@@ -6,13 +6,20 @@ locals {
   # emitted per secret and the others are left null for Terraform to omit.
   #
   # Precedence per secret:
-  #   1. value or plaintext_value                      -> value
-  #   2. value_encrypted or encrypted_value, + key_id  -> value_encrypted + key_id
-  #   3. value_encrypted or encrypted_value, no key_id -> encrypted_value
+  #   1. value or plaintext_value                     -> value
+  #   2. value_encrypted or encrypted_value           -> value_encrypted
+  #      (+ key_id when the caller supplies one)
   #
-  # Case 3 keeps the deprecated encrypted_value because value_encrypted is
-  # documented to pair with key_id and no caller supplies one yet. It remains
-  # functional; a secret migrates to case 2 simply by gaining a key_id.
+  # There is deliberately no third case emitting the deprecated encrypted_value.
+  # An earlier version kept it for encrypted secrets with no key_id, on the
+  # reading that value_encrypted must pair with key_id. The provider schema says
+  # the opposite: key_id carries RequiredWith: ["value_encrypted"], so key_id
+  # requires value_encrypted and not the reverse, and key_id is additionally
+  # Computed. When it is empty the provider resolves the organization public key
+  # itself (getOrganizationPublicKeyDetails in
+  # resource_github_actions_organization_secret.go) - the identical code path the
+  # deprecated argument took. value_encrypted alone is therefore sufficient, and
+  # encrypted_value only added 48 deprecation warnings per plan.
   actions_secret_values = {
     for secret in var.github_actions_secrets : secret.name => {
       plaintext = try(coalesce(secret.value, secret.plaintext_value), null)
@@ -24,9 +31,8 @@ locals {
   actions_secret_arguments = {
     for name, secret in local.actions_secret_values : name => {
       value           = secret.plaintext
-      value_encrypted = secret.plaintext == null && secret.key_id != null ? secret.encrypted : null
-      key_id          = secret.plaintext == null && secret.key_id != null ? secret.key_id : null
-      encrypted_value = secret.plaintext == null && secret.key_id == null ? secret.encrypted : null
+      value_encrypted = secret.plaintext == null ? secret.encrypted : null
+      key_id          = secret.plaintext == null ? secret.key_id : null
     }
   }
 }
@@ -43,7 +49,6 @@ resource "github_actions_organization_secret" "this" {
   value           = local.actions_secret_arguments[each.key].value
   value_encrypted = local.actions_secret_arguments[each.key].value_encrypted
   key_id          = local.actions_secret_arguments[each.key].key_id
-  encrypted_value = local.actions_secret_arguments[each.key].encrypted_value
 
   visibility = lookup(each.value, "visibility", "private")
 
@@ -93,7 +98,6 @@ resource "github_actions_secret" "this" {
   value           = local.actions_secret_arguments[each.key].value
   value_encrypted = local.actions_secret_arguments[each.key].value_encrypted
   key_id          = local.actions_secret_arguments[each.key].key_id
-  encrypted_value = local.actions_secret_arguments[each.key].encrypted_value
 
   repository = each.value.repository
 
@@ -115,7 +119,6 @@ resource "github_actions_environment_secret" "this" {
   value           = local.actions_secret_arguments[each.key].value
   value_encrypted = local.actions_secret_arguments[each.key].value_encrypted
   key_id          = local.actions_secret_arguments[each.key].key_id
-  encrypted_value = local.actions_secret_arguments[each.key].encrypted_value
 
   repository  = each.value.repository
   environment = each.value.environment
