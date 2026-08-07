@@ -30,10 +30,8 @@ resource "github_actions_organization_variable" "this" {
   )
 
   depends_on = [
-    data.github_enterprise.this,
     data.github_organization.this
   ]
-
 }
 
 # Repository Variables
@@ -49,7 +47,6 @@ resource "github_actions_variable" "this" {
   repository = each.value.repository
 
   depends_on = [
-    data.github_enterprise.this,
     data.github_organization.this,
     data.github_repository.this
   ]
@@ -69,7 +66,6 @@ resource "github_actions_environment_variable" "this" {
   environment = each.value.environment
 
   depends_on = [
-    data.github_enterprise.this,
     data.github_organization.this,
     data.github_repository.this
   ]

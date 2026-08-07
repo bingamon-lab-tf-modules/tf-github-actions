@@ -6,7 +6,7 @@ resource "github_enterprise_actions_runner_group" "this" {
   }
 
   # The slug of the enterprise where the runner group will be created.
-  enterprise_slug = data.github_enterprise.this.slug
+  enterprise_slug = var.github_enterprise_slug
 
   # The name of the runner group. Must be unique within the enterprise.
   name = each.value.name
@@ -32,10 +32,6 @@ resource "github_enterprise_actions_runner_group" "this" {
   # Workflow whitelist
   restricted_to_workflows = lookup(each.value, "workflow_whitelist", {}).enabled != null ? lookup(each.value, "workflow_whitelist", {}).enabled : false
   selected_workflows      = lookup(each.value, "workflow_whitelist", {}).workflows != null ? lookup(each.value, "workflow_whitelist", {}).workflows : null
-
-  depends_on = [
-    data.github_enterprise.this
-  ]
 }
 
 # Organization Runner Groups
@@ -69,8 +65,4 @@ resource "github_actions_runner_group" "this" {
   # Workflow whitelist
   restricted_to_workflows = lookup(each.value.workflow_whitelist, "enabled", false)
   selected_workflows      = lookup(each.value.workflow_whitelist, "workflows", null)
-
-  depends_on = [
-    data.github_enterprise.this
-  ]
 }
