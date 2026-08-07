@@ -9,7 +9,6 @@ resource "github_actions_organization_oidc_subject_claim_customization_template"
   include_claim_keys = each.value.include_claim_keys
 
   depends_on = [
-    data.github_enterprise.this,
     data.github_organization.this
   ]
 }
@@ -29,7 +28,6 @@ resource "github_actions_repository_oidc_subject_claim_customization_template" "
   include_claim_keys = lookup(each.value, "use_default", true) == false ? each.value.include_claim_keys : null
 
   depends_on = [
-    data.github_enterprise.this,
     data.github_organization.this,
     data.github_repository.this
   ]

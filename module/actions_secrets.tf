@@ -51,10 +51,8 @@ resource "github_actions_organization_secret" "this" {
   # below; selected_repository_ids on this resource is deprecated upstream.
 
   depends_on = [
-    data.github_enterprise.this,
     data.github_organization.this
   ]
-
 }
 
 # Organization Secret Repository Access
@@ -100,7 +98,6 @@ resource "github_actions_secret" "this" {
   repository = each.value.repository
 
   depends_on = [
-    data.github_enterprise.this,
     data.github_organization.this,
     data.github_repository.this
   ]
@@ -124,7 +121,6 @@ resource "github_actions_environment_secret" "this" {
   environment = each.value.environment
 
   depends_on = [
-    data.github_enterprise.this,
     data.github_organization.this,
     data.github_repository.this
   ]

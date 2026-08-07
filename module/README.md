@@ -118,7 +118,6 @@ No modules.
 | [github_actions_variable.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_variable) | resource |
 | [github_enterprise_actions_runner_group.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/enterprise_actions_runner_group) | resource |
 | [null_resource.validate_organizations](https://registry.terraform.io/providers/hashicorp/null/3.3.0/docs/resources/resource) | resource |
-| [github_enterprise.this](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/enterprise) | data source |
 | [github_organization.this](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/organization) | data source |
 | [github_repository.this](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/repository) | data source |
 
