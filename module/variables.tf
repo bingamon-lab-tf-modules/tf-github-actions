@@ -105,12 +105,14 @@ variable "github_actions_secrets" {
     # value / value_encrypted / encrypted_value / plaintext_value with
     # ExactlyOneOf, which rejects both "more than one" and "none at all".
     value           = optional(string, null) # Plaintext value, preferred.
-    value_encrypted = optional(string, null) # Base64 value, pairs with key_id.
-    key_id          = optional(string, null) # Public key id for value_encrypted.
+    value_encrypted = optional(string, null) # Base64 value.
+    key_id          = optional(string, null) # Optional; the provider resolves it when omitted.
 
-    # Legacy aliases, deprecated upstream but still accepted so existing
-    # callers keep working. plaintext_value maps to value, and encrypted_value
-    # maps to value_encrypted once key_id is supplied.
+    # Legacy aliases, deprecated upstream but still accepted so existing callers
+    # keep working. plaintext_value maps to value, and encrypted_value maps to
+    # value_encrypted - unconditionally, with or without a key_id. Neither is
+    # passed through to a resource: the deprecated provider arguments are no
+    # longer emitted at all.
     encrypted_value = optional(string, null)
     plaintext_value = optional(string, null)
 
