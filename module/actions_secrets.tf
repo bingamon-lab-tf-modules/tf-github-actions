@@ -20,8 +20,30 @@ locals {
   # resource_github_actions_organization_secret.go) - the identical code path the
   # deprecated argument took. value_encrypted alone is therefore sufficient, and
   # encrypted_value only added 48 deprecation warnings per plan.
+
+  # A secret is identified by its SCOPE, not by its name alone. The same name
+  # can legitimately exist as an organization secret, on two repositories, and
+  # in two environments of one repository - a shared token held by both a
+  # protected `saas` environment and an unprotected `saas-plan` environment is
+  # the canonical case, and each scope has its own public key so each needs its
+  # own ciphertext. Keying these maps by `secret.name` made those collide with
+  # "duplicate object key" and left multi-environment secrets undeclarable.
+  #
+  # Organization secrets deliberately keep their bare-name key. This module is
+  # instantiated per organization, so a name is already unique among them, and
+  # re-keying would force every existing organization secret to be destroyed and
+  # recreated on upgrade - a needless window with no secret present.
+  actions_secrets_by_scope = {
+    for secret in var.github_actions_secrets :
+    (
+      secret.type == "environment" ? "${secret.repository}/${secret.environment}/${secret.name}" :
+      secret.type == "repository" ? "${secret.repository}/${secret.name}" :
+      secret.name
+    ) => secret
+  }
+
   actions_secret_values = {
-    for secret in var.github_actions_secrets : secret.name => {
+    for scope_key, secret in local.actions_secrets_by_scope : scope_key => {
       plaintext = try(coalesce(secret.value, secret.plaintext_value), null)
       encrypted = try(coalesce(secret.value_encrypted, secret.encrypted_value), null)
       key_id    = secret.key_id
@@ -29,7 +51,7 @@ locals {
   }
 
   actions_secret_arguments = {
-    for name, secret in local.actions_secret_values : name => {
+    for scope_key, secret in local.actions_secret_values : scope_key => {
       value           = secret.plaintext
       value_encrypted = secret.plaintext == null ? secret.encrypted : null
       key_id          = secret.plaintext == null ? secret.key_id : null
@@ -40,7 +62,7 @@ locals {
 # Organization Secrets
 resource "github_actions_organization_secret" "this" {
   for_each = {
-    for secret in var.github_actions_secrets : secret.name => secret
+    for scope_key, secret in local.actions_secrets_by_scope : scope_key => secret
     if secret.type == "organization"
   }
 
@@ -66,7 +88,7 @@ resource "github_actions_organization_secret" "this" {
 # is "selected"; the provider rejects a repository list for any other value.
 resource "github_actions_organization_secret_repositories" "this" {
   for_each = {
-    for secret in var.github_actions_secrets : secret.name => secret
+    for scope_key, secret in local.actions_secrets_by_scope : scope_key => secret
     if secret.type == "organization" &&
     lookup(secret, "visibility", "private") == "selected" &&
     length(coalesce(secret.allowed_repositories, [])) > 0
@@ -89,7 +111,7 @@ resource "github_actions_organization_secret_repositories" "this" {
 # Repository Secrets
 resource "github_actions_secret" "this" {
   for_each = {
-    for secret in var.github_actions_secrets : secret.name => secret
+    for scope_key, secret in local.actions_secrets_by_scope : scope_key => secret
     if secret.type == "repository"
   }
 
@@ -110,7 +132,7 @@ resource "github_actions_secret" "this" {
 # Environment Secrets
 resource "github_actions_environment_secret" "this" {
   for_each = {
-    for secret in var.github_actions_secrets : secret.name => secret
+    for scope_key, secret in local.actions_secrets_by_scope : scope_key => secret
     if secret.type == "environment"
   }
 
