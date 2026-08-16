@@ -7,18 +7,34 @@
 # not enough to keep a value-less secret away from the provider's ExactlyOneOf
 # constraint. Name and type presence is guaranteed by the variable's type.
 
-# Check secret name uniqueness across different types and scopes
-check "actions_secrets_unique_names" {
+# Check secret uniqueness WITHIN a scope.
+#
+# A bare name is not the identity of a secret: the same name may exist as an
+# organization secret, on two repositories, and in two environments of one
+# repository, and each is a distinct secret with its own ciphertext. Asserting
+# on names alone rejected those legitimate declarations. The scope key
+# (organization -> name, repository -> repo/name, environment ->
+# repo/env/name) matches the for_each keys in actions_secrets.tf, so this now
+# catches exactly the duplicates that would collide there.
+check "actions_secrets_unique_scopes" {
   assert {
     condition = length(var.github_actions_secrets) == length(distinct([
-      for secret in var.github_actions_secrets : secret.name
+      for secret in var.github_actions_secrets :
+      secret.type == "environment" ? "${secret.repository}/${secret.environment}/${secret.name}" :
+      secret.type == "repository" ? "${secret.repository}/${secret.name}" :
+      secret.name
     ]))
     error_message = join("\n", concat(
-      ["Duplicate secret names found:"],
+      ["Duplicate secrets found (same name in the same scope):"],
       [
-        for name, secrets in {
-          for secret in var.github_actions_secrets : secret.name => secret...
-        } : name
+        for scope_key, secrets in {
+          for secret in var.github_actions_secrets :
+          (
+            secret.type == "environment" ? "${secret.repository}/${secret.environment}/${secret.name}" :
+            secret.type == "repository" ? "${secret.repository}/${secret.name}" :
+            secret.name
+          ) => secret...
+        } : scope_key
         if length(secrets) > 1
       ]
     ))

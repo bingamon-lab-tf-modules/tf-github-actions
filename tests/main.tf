@@ -96,6 +96,36 @@ module "test" {
       value                = "test-scoped-value"
       visibility           = "selected"
       allowed_repositories = ["test-repo"]
+    },
+    # One name, two environments on the same repository - the shape a shared
+    # token takes when a protected environment gates applies and an unprotected
+    # one lets pull-request plans run. Each environment has its own public key,
+    # so each carries its own ciphertext.
+    #
+    # Regression case: while every map here was keyed by `secret.name`, these
+    # two collided and the module failed at validate time with "duplicate object
+    # key", making the arrangement impossible to declare at all.
+    {
+      name        = "TEST_SHARED_ENV_SECRET"
+      type        = "environment"
+      repository  = "test-repo"
+      environment = "test-env-protected"
+      value       = "test-protected-value"
+    },
+    {
+      name        = "TEST_SHARED_ENV_SECRET"
+      type        = "environment"
+      repository  = "test-repo"
+      environment = "test-env-unprotected"
+      value       = "test-unprotected-value"
+    },
+    # Same name again, this time as a repository secret, to prove the scope key
+    # separates types and not just environments.
+    {
+      name       = "TEST_SHARED_ENV_SECRET"
+      type       = "repository"
+      repository = "test-repo"
+      value      = "test-repo-value"
     }
   ]
 
