@@ -86,3 +86,6 @@ waderyan
 wakatime
 yzhang
 prek
+SecretSpec
+mktemp
+undeclarable
