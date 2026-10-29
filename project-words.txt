@@ -86,3 +86,9 @@ waderyan
 wakatime
 yzhang
 prek
+SecretSpec
+mktemp
+undeclarable
+esac
+tftest
+secops

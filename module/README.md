@@ -85,7 +85,7 @@ github_actions_permissions = {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.13 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | 3.3.0 |
@@ -93,7 +93,7 @@ github_actions_permissions = {
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_github"></a> [github](#provider\_github) | 6.13.0 |
 | <a name="provider_null"></a> [null](#provider\_null) | 3.3.0 |
 
@@ -104,7 +104,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [github_actions_environment_secret.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_environment_secret) | resource |
 | [github_actions_environment_variable.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_environment_variable) | resource |
 | [github_actions_organization_oidc_subject_claim_customization_template.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_organization_oidc_subject_claim_customization_template) | resource |
@@ -124,7 +124,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_github_actions_oidc_subject_claim_templates"></a> [github\_actions\_oidc\_subject\_claim\_templates](#input\_github\_actions\_oidc\_subject\_claim\_templates) | n/a | <pre>list(object({<br/>    type = string<br/><br/>    include_claim_keys = optional(list(string), []) # default: []<br/>    use_default        = optional(bool, true)       # default: true<br/><br/>    repository = optional(string)<br/>  }))</pre> | `[]` | no |
 | <a name="input_github_actions_permissions"></a> [github\_actions\_permissions](#input\_github\_actions\_permissions) | n/a | <pre>object({<br/>    # Required: The policy that controls the repositories in the organization that are allowed to run GitHub Actions<br/>    # Can be one of: all, none, or selected<br/>    enabled_repositories = string<br/><br/>    # Optional: The permissions policy that controls the actions that are allowed to run<br/>    # Can be one of: all, local_only, or selected<br/>    allowed_actions = optional(string, "all")<br/><br/>    # Optional: Sets the actions that are allowed in an organization<br/>    # Only available when allowed_actions = selected<br/>    allowed_actions_config = optional(object({<br/>      # Required: Whether GitHub-owned actions are allowed in the organization<br/>      github_owned_allowed = bool<br/><br/>      # Optional: Whether actions in GitHub Marketplace from verified creators are allowed<br/>      verified_allowed = optional(bool, false)<br/><br/>      # Optional: List of string-matching patterns to allow specific action(s)<br/>      # Wildcards, tags, and SHAs are allowed<br/>      patterns_allowed = optional(list(string), [])<br/>    }), null)<br/><br/>    # Optional: Sets the list of selected repositories that are enabled for GitHub Actions<br/>    # Only available when enabled_repositories = selected<br/>    # Provide repository names - IDs will be looked up automatically<br/>    enabled_repositories_config = optional(object({<br/>      repositories = list(string)<br/>    }), null)<br/><br/>    # Optional: Whether pinning to a specific SHA is required for all actions<br/>    # and reusable workflows in the organization.<br/>    #<br/>    # Exposed but unmanaged by default. Enabling it is a conscious decision<br/>    # because it forces every workflow reference to become a SHA.<br/>    #<br/>    # The default is deliberately null, NOT false. Do not "tidy" it to false:<br/>    # sha_pinning_required is Optional + Computed in the provider, and its<br/>    # update path guards on d.GetOk(), which returns ok=false for a false<br/>    # boolean (false is the zero value in terraform-plugin-sdk). So false is<br/>    # never sent to the API and cannot turn pinning off. Worse, because the<br/>    # attribute is Computed, config false against a remote value of true<br/>    # produces a diff that apply cannot resolve - a perpetual, never-<br/>    # converging plan. null means "leave whatever GitHub has", which is the<br/>    # only honest way to express "off by default" for this attribute.<br/>    sha_pinning_required = optional(bool, null)<br/>  })</pre> | `null` | no |
 | <a name="input_github_actions_runner_groups"></a> [github\_actions\_runner\_groups](#input\_github\_actions\_runner\_groups) | n/a | <pre>list(object({<br/>    name = optional(string, null)<br/>    type = optional(string, null)<br/><br/>    # Whether the runner group allows public repositories<br/>    allows_public_repositories = optional(bool, false) # default: false<br/><br/>    # Visibility of the runner group<br/>    visibility = optional(string, "all") # default: "all"<br/><br/>    # For enterprise runner groups with visibility "selected":<br/>    # Provide organization names - IDs will be looked up automatically<br/>    allowed_organizations = optional(list(string), []) # default: []<br/><br/>    # For organization runner groups with visibility "selected" or "private":<br/>    # Provide repository names - IDs will be looked up automatically<br/>    allowed_repositories = optional(list(string), []) # default: []<br/><br/>    # Optional workflow whitelist to apply to the runner group<br/>    workflow_whitelist = optional(object({<br/>      enabled   = optional(bool, false)      # default: false<br/>      workflows = optional(list(string), []) # default: []<br/>      }), {<br/>      enabled   = false,<br/>      workflows = [],<br/>    })<br/>  }))</pre> | `[]` | no |
@@ -137,6 +137,6 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_github_actions_organization_permissions"></a> [github\_actions\_organization\_permissions](#output\_github\_actions\_organization\_permissions) | GitHub Actions organization permissions configuration |
 <!-- END_TF_DOCS -->
