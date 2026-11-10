@@ -92,3 +92,10 @@ undeclarable
 esac
 tftest
 secops
+artifactory
+codeql
+opentofu
+shfmt
+statix
+trivy
+yamllint
